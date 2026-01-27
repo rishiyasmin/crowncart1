@@ -29,10 +29,19 @@ export default function Login() {
         password,
       });
 
-      // ✅ Save login data
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      console.log("✅ LOGIN RESPONSE =>", res.data);
 
-      // ✅ token may be demo sometimes, so fallback safe
+      // ✅ FIX: user can be in res.data.user OR res.data
+      const userData = res.data.user || res.data;
+
+      // ✅ If still no user data, stop login
+      if (!userData) {
+        setError("Invalid login response from server");
+        return;
+      }
+
+      // ✅ Save user + token
+      localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", res.data.token || "demo-token");
 
       // ✅ Update navbar instantly
@@ -41,7 +50,7 @@ export default function Login() {
       // ✅ go to profile
       navigate("/profile");
     } catch (err) {
-      console.log("LOGIN ERROR =>", err.response?.data || err.message);
+      console.log("❌ LOGIN ERROR =>", err.response?.data || err.message);
       setError(err.response?.data?.error || "Login failed");
     } finally {
       setLoading(false);

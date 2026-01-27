@@ -51,9 +51,11 @@ export default function Home() {
     : products;
 
   // ✅ 2) Category filter
-  const finalFiltered = searchedProducts.filter((p) =>
-    category === "all" ? true : p.category === category
-  );
+const finalFiltered = searchedProducts.filter((p) =>
+  category === "all"
+    ? true
+    : (p.category || "").toLowerCase() === category.toLowerCase()
+);
 
   return (
     <div className="container">
@@ -71,7 +73,7 @@ export default function Home() {
 
         <button
           style={category === "groceries" ? styles.activeCatBtn : styles.catBtn}
-          onClick={() => handleCategoryClick("groceries")}
+          onClick={() => handleCategoryClick("Groceries")}
         >
           🥦 Groceries
         </button>
@@ -80,7 +82,7 @@ export default function Home() {
           style={
             category === "electronics" ? styles.activeCatBtn : styles.catBtn
           }
-          onClick={() => handleCategoryClick("electronics")}
+          onClick={() => handleCategoryClick("Electronics")}
         >
           ⚡ Electronics
         </button>
@@ -89,7 +91,7 @@ export default function Home() {
           style={
             category === "accessories" ? styles.activeCatBtn : styles.catBtn
           }
-          onClick={() => handleCategoryClick("accessories")}
+          onClick={() => handleCategoryClick("Accessories")}
         >
           🎒 Accessories
         </button>
