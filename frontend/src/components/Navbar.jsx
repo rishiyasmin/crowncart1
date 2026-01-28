@@ -1,89 +1,190 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getCart } from "../utils/cart";
 
-export default function Footer() {
+export default function Navbar() {
+  const [cartQty, setCartQty] = useState(0);
+  const [search, setSearch] = useState("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // ✅ Load cart count instantly
+  const loadCartCount = () => {
+    const cart = getCart();
+    const total = cart.reduce((sum, item) => sum + item.qty, 0);
+    setCartQty(total);
+  };
+
+  useEffect(() => {
+    loadCartCount();
+
+    const handleCartUpdate = () => loadCartCount();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
+
+  const isActive = (path) => location.pathname === path;
+
+  // ✅ search submit
+  const handleSearch = (e) => {
+    e.preventDefault();
+    navigate(`/?search=${search}`);
+  };
+
   return (
-    <footer style={styles.footer}>
-      <div style={styles.container}>
-        {/* Left */}
-        <div style={styles.col}>
-          <h2 style={styles.logo}>👑 CrownCart</h2>
-          <p style={styles.text}>
-            Shop Groceries, Electronics & Accessories with the best deals.
-          </p>
-        </div>
+    <nav style={styles.nav}>
+      <div style={styles.inner}>
+        {/* ✅ Logo */}
+        <Link to="/" style={styles.logoBox}>
+          <img src="/logo.png" alt="logo" style={styles.logoImg} />
+          <span style={styles.logoText}>CrownCart</span>
+        </Link>
 
-        {/* Middle */}
-        <div style={styles.col}>
-          <h3 style={styles.heading}>Quick Links</h3>
-          <Link to="/" style={styles.link}>Home</Link>
-          <Link to="/cart" style={styles.link}>Cart</Link>
-          <Link to="/login" style={styles.link}>Login</Link>
-          <Link to="/signup" style={styles.link}>Signup</Link>
-        </div>
+        {/* ✅ Search Bar */}
+        <form onSubmit={handleSearch} style={styles.searchBox}>
+          <input
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={styles.searchInput}
+          />
+          <button style={styles.searchBtn}>Search</button>
+        </form>
 
-        {/* Right */}
-        <div style={styles.col}>
-          <h3 style={styles.heading}>Support</h3>
-          <p style={styles.text}>📞 +91 98765 43210</p>
-          <p style={styles.text}>✉️ support@crowncart.com</p>
-          <p style={styles.text}>📍 India</p>
+        {/* ✅ Links */}
+        <div style={styles.links}>
+          <Link to="/" style={isActive("/") ? styles.activeLink : styles.link}>
+            Home
+          </Link>
+
+          <Link
+            to="/cart"
+            style={isActive("/cart") ? styles.activeLink : styles.link}
+          >
+            Cart 🛒 <span style={styles.badge}>{cartQty}</span>
+          </Link>
+
+          <Link
+            to="/login"
+            style={isActive("/login") ? styles.activeLink : styles.link}
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/signup"
+            style={isActive("/signup") ? styles.activeLink : styles.link}
+          >
+            Signup
+          </Link>
         </div>
       </div>
-
-      <div style={styles.bottom}>
-        © {new Date().getFullYear()} CrownCart. All rights reserved.
-      </div>
-    </footer>
+    </nav>
   );
 }
 
 const styles = {
-  footer: {
-    marginTop: "40px",
+  nav: {
     background: "linear-gradient(90deg, #0f172a, #1e3a8a)",
-    color: "white",
-    paddingTop: "35px",
+    padding: "14px 0",
+    boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
   },
-  container: {
+
+  inner: {
     width: "92%",
     maxWidth: "1200px",
     margin: "auto",
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-    gap: "25px",
-    paddingBottom: "30px",
-  },
-  col: {
     display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "20px",
   },
-  logo: {
-    fontSize: "22px",
-    fontWeight: "900",
+
+  logoBox: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    textDecoration: "none",
+  },
+
+  logoImg: {
+    width: "44px",
+    height: "44px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    background: "white",
+    padding: "4px",
+  },
+
+  logoText: {
     color: "#ffd700",
+    fontWeight: "900",
+    fontSize: "22px",
   },
-  heading: {
-    fontSize: "16px",
+
+  searchBox: {
+    display: "flex",
+    alignItems: "center",
+    background: "rgba(255,255,255,0.12)",
+    borderRadius: "14px",
+    overflow: "hidden",
+    flex: 1,
+    maxWidth: "420px",
+  },
+
+  searchInput: {
+    flex: 1,
+    padding: "10px 14px",
+    border: "none",
+    outline: "none",
+    background: "transparent",
+    color: "white",
+    fontSize: "14px",
+  },
+
+  searchBtn: {
+    padding: "10px 16px",
+    border: "none",
+    background: "#facc15",
     fontWeight: "800",
-    marginBottom: "6px",
+    cursor: "pointer",
   },
-  text: {
-    color: "#cbd5e1",
-    fontSize: "14px",
-    lineHeight: "1.6",
+
+  links: {
+    display: "flex",
+    gap: "16px",
+    alignItems: "center",
   },
+
   link: {
-    color: "#cbd5e1",
-    fontSize: "14px",
+    color: "white",
+    padding: "8px 12px",
+    borderRadius: "12px",
     textDecoration: "none",
     fontWeight: "700",
   },
-  bottom: {
-    borderTop: "1px solid rgba(255,255,255,0.15)",
-    textAlign: "center",
-    padding: "14px",
+
+  activeLink: {
+    color: "white",
+    background: "rgba(255,255,255,0.18)",
+    padding: "8px 12px",
+    borderRadius: "12px",
+    textDecoration: "none",
+    fontWeight: "700",
+  },
+
+  badge: {
+    background: "#ffd700",
+    color: "#111",
+    padding: "2px 9px",
+    borderRadius: "18px",
+    fontWeight: "900",
+    marginLeft: "5px",
     fontSize: "13px",
-    color: "#cbd5e1",
   },
 };

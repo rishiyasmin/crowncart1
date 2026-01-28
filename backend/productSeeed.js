@@ -203,7 +203,7 @@ const products = [
     name: "Sunglasses",
     price: 599,
     category: "accessories",
-    image: "https://www.gentlemansgazette.com/wp-content/uploads/2016/08/The-Randolph-Engineering-Aviator-Sunglasses.jpg",
+    image: "https://tse3.mm.bing.net/th/id/OIP.j_-KzDBmLd0AG-OmhNZqWQHaE8?pid=Api&P=0&h=180",
     description: "Stylish UV protection sunglasses",
     rating: 4.3,
     reviewsCount: 130,
