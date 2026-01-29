@@ -15,34 +15,54 @@ export default function Profile() {
     }
   }, [navigate]);
 
-  if (!user) return null; // ✅ avoids blank crash
+  if (!user) return null;
+
+  const firstLetter = user?.name?.charAt(0)?.toUpperCase() || "U";
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h2 style={styles.title}>👤 My Profile</h2>
+        {/* Header */}
+        <div style={styles.header}>
+          <div style={styles.avatar}>{firstLetter}</div>
 
-        <div style={styles.row}>
-          <span style={styles.label}>Name:</span>
-          <span style={styles.value}>{user.name || "Not given"}</span>
+          <div>
+            <h2 style={styles.title}>My Profile</h2>
+            <p style={styles.subTitle}>Hello, {user.name || "User"} 👋</p>
+          </div>
         </div>
 
-        <div style={styles.row}>
-          <span style={styles.label}>Email:</span>
-          <span style={styles.value}>{user.email}</span>
+        {/* Info */}
+        <div style={styles.infoBox}>
+          <div style={styles.row}>
+            <span style={styles.label}>Name</span>
+            <span style={styles.value}>{user.name || "Not given"}</span>
+          </div>
+
+          <div style={styles.row}>
+            <span style={styles.label}>Email</span>
+            <span style={styles.value}>{user.email || "Not given"}</span>
+          </div>
         </div>
 
-        <button
-          style={styles.logoutBtn}
-          onClick={() => {
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            window.dispatchEvent(new Event("authUpdated"));
-            navigate("/login");
-          }}
-        >
-          Logout 🚪
-        </button>
+        {/* Buttons */}
+        <div style={styles.btnRow}>
+          <button style={styles.homeBtn} onClick={() => navigate("/")}>
+            🏠 Go Home
+          </button>
+
+          <button
+            style={styles.logoutBtn}
+            onClick={() => {
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              window.dispatchEvent(new Event("authUpdated"));
+              navigate("/login");
+            }}
+          >
+            🚪 Logout
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -54,40 +74,95 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg, #f3f7ff, #eef2ff, #f8fafc)",
     padding: "20px",
+    background: "linear-gradient(135deg, #f3f7ff, #eef2ff, #f8fafc)",
   },
+
   card: {
     width: "100%",
-    maxWidth: "450px",
+    maxWidth: "520px",
     background: "white",
     borderRadius: "18px",
     padding: "28px",
     boxShadow: "0 18px 40px rgba(0,0,0,0.12)",
   },
-  title: {
-    fontSize: "26px",
-    fontWeight: "900",
+
+  header: {
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
     marginBottom: "20px",
+  },
+
+  avatar: {
+    width: "55px",
+    height: "55px",
+    borderRadius: "50%",
+    background: "linear-gradient(90deg, #2563eb, #9333ea)",
+    color: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "22px",
+    fontWeight: "900",
+  },
+
+  title: {
+    fontSize: "24px",
+    fontWeight: "900",
+    margin: 0,
     color: "#111827",
   },
+
+  subTitle: {
+    margin: "4px 0 0",
+    fontSize: "14px",
+    color: "#64748b",
+    fontWeight: "600",
+  },
+
+  infoBox: {
+    background: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: "14px",
+    padding: "16px",
+  },
+
   row: {
     display: "flex",
     justifyContent: "space-between",
     padding: "12px 0",
     borderBottom: "1px solid #e2e8f0",
   },
+
   label: {
     fontWeight: "800",
     color: "#334155",
   },
+
   value: {
     fontWeight: "700",
     color: "#111827",
   },
+
+  btnRow: {
+    display: "flex",
+    gap: "10px",
+    marginTop: "18px",
+  },
+
+  homeBtn: {
+    flex: 1,
+    padding: "12px",
+    borderRadius: "12px",
+    border: "1px solid #cbd5e1",
+    background: "white",
+    cursor: "pointer",
+    fontWeight: "900",
+  },
+
   logoutBtn: {
-    marginTop: "20px",
-    width: "100%",
+    flex: 1,
     padding: "12px",
     borderRadius: "12px",
     border: "none",

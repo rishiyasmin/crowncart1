@@ -9,32 +9,51 @@ export default function Signup() {
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // ✅ add state for checkbox
+  const [agree, setAgree] = useState(false);
+
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
-    e.preventDefault();
+  const handleSignup = async (e) => {
+  e.preventDefault();
 
-    if (!name || !email || !password || !confirm) {
-      alert("❌ Fill all fields");
+  if (!name || !email || !password || !confirm) {
+    alert("❌ Fill all fields");
+    return;
+  }
+
+  if (password !== confirm) {
+    alert("❌ Passwords do not match");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("❌ " + (data.error || "Signup failed"));
       return;
     }
 
-    if (password !== confirm) {
-      alert("❌ Passwords do not match");
-      return;
-    }
-
-    alert("✅ Signup Success (demo)");
+    alert("✅ Signup Successful! Please login now");
     navigate("/login");
-  };
+  } catch (error) {
+    alert("❌ Server error");
+  }
+};
+
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
         <h2 style={styles.title}>Create Account ✨</h2>
-        <p style={styles.subTitle}>
-          Join CrownCart and start shopping today 👑
-        </p>
+        <p style={styles.subTitle}>Join CrownCart and start shopping today 👑</p>
 
         <form onSubmit={handleSignup} style={styles.form}>
           {/* Name */}
@@ -93,17 +112,26 @@ export default function Signup() {
             </button>
           </div>
 
-          {/* Terms */}
+          {/* ✅ Terms */}
           <div style={styles.terms}>
-            <input type="checkbox" required />
+            <input
+              type="checkbox"
+              checked={agree}
+              onChange={(e) => setAgree(e.target.checked)}
+            />
             <span style={{ fontSize: "14px" }}>
               I agree to the{" "}
-              <span style={styles.termLink}>Terms & Conditions</span>
+              {/* ✅ IMPORTANT: use /terms not /Terms */}
+              <Link to="/terms" style={styles.termLink}>
+                Terms & Conditions
+              </Link>
             </span>
           </div>
 
           {/* Button */}
-          <button style={styles.btn}>Create Account</button>
+          <button type="submit" style={styles.btn}>
+            Create Account
+          </button>
         </form>
 
         <p style={styles.bottomText}>
@@ -207,6 +235,7 @@ const styles = {
     color: "#2563eb",
     fontWeight: "800",
     cursor: "pointer",
+    textDecoration: "underline",
   },
 
   btn: {

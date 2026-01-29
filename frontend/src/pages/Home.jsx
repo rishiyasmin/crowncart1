@@ -65,42 +65,38 @@ export default function Home() {
       {/* ✅ Banner Slider */}
       <BannerSlider />
 
-      {/* ✅ Categories */}
       <div style={styles.categoryBar}>
-        <button
-          style={category === "all" ? styles.activeCatBtn : styles.catBtn}
-          onClick={() => handleCategoryClick("all")}
-        >
-          ⭐ All
-        </button>
+  <button
+    style={category === "all" ? styles.activeCatBtn : styles.catBtn}
+    onClick={() => handleCategoryClick("all")}
+  >
+    ⭐ All
+  </button>
 
-        <button
-          style={category === "groceries" ? styles.activeCatBtn : styles.catBtn}
-          onClick={() => handleCategoryClick("Groceries")}
-        >
-          🥦 Groceries
-        </button>
+  <button
+    style={category === "groceries" ? styles.activeCatBtn : styles.catBtn}
+    onClick={() => handleCategoryClick("groceries")}
+  >
+    🥦 Groceries
+  </button>
 
-        <button
-          style={
-            category === "electronics" ? styles.activeCatBtn : styles.catBtn
-          }
-          onClick={() => handleCategoryClick("Electronics")}
-        >
-          ⚡ Electronics
-        </button>
+  <button
+    style={category === "electronics" ? styles.activeCatBtn : styles.catBtn}
+    onClick={() => handleCategoryClick("electronics")}
+  >
+    ⚡ Electronics
+  </button>
 
-        <button
-          style={
-            category === "accessories" ? styles.activeCatBtn : styles.catBtn
-          }
-          onClick={() => handleCategoryClick("Accessories")}
-        >
-          🎒 Accessories
-        </button>
-      </div>
+  <button
+    style={category === "accessories" ? styles.activeCatBtn : styles.catBtn}
+    onClick={() => handleCategoryClick("accessories")}
+  >
+    🎒 Accessories
+  </button>
+</div>
 
-      <h2 style={{ marginBottom: "15px" }}>🔥 Trending Products</h2>
+
+      <h2 style={{ marginBottom: "15px" }}>Products</h2>
 
       {/* ✅ Products */}
       <div style={styles.grid}>
@@ -121,7 +117,20 @@ export default function Home() {
                 {p.name}
               </h3>
 
-              <p style={styles.price}>₹{p.price}</p>
+              <div style={styles.priceBox}>
+  <span style={styles.offerPrice}>₹{p.price}</span>
+
+  {p.mrp && (
+    <span style={styles.mrpPrice}>₹{p.mrp}</span>
+  )}
+
+  {p.mrp && (
+    <span style={styles.discount}>
+      {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF
+    </span>
+  )}
+</div>
+
 
               <button
                 onClick={(e) => {
@@ -228,4 +237,35 @@ const styles = {
     background: "linear-gradient(90deg, #2563eb, #9333ea)",
     marginTop: "10px",
   },
+  priceBox: {
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  marginTop: "6px",
+  marginBottom: "10px",
+  flexWrap: "wrap",
+},
+
+offerPrice: {
+  fontSize: "18px",
+  fontWeight: "900",
+  color: "#16a34a",
+},
+
+mrpPrice: {
+  fontSize: "14px",
+  fontWeight: "800",
+  color: "#64748b",
+  textDecoration: "line-through",
+},
+
+discount: {
+  fontSize: "12px",
+  fontWeight: "900",
+  color: "white",
+  background: "#ef4444",
+  padding: "3px 8px",
+  borderRadius: "10px",
+},
+
 };

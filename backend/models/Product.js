@@ -3,17 +3,20 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    price: { type: Number, required: true },
+
+    mrp: { type: Number, required: true },   // ✅ Original price
+    price: { type: Number, required: true }, // ✅ Offer price
+
     image: { type: String, default: "" },
 
     category: {
       type: String,
       required: true,
-      enum: ["groceries", "accessories", "electronics"], // ✅ correct
+      enum: ["groceries", "accessories", "electronics"],
     },
 
     rating: { type: Number, default: 4.2 },
-    reviews: { type: Number, default: 120 },
+
     description: { type: String, default: "Best quality product" },
   },
   { timestamps: true }
