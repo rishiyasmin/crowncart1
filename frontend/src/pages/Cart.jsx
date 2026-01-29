@@ -8,20 +8,28 @@ export default function Cart() {
 
   const load = () => setCart(getCart());
 
-useEffect(() => {
-  load();
+  useEffect(() => {
+    load();
 
-  const handleUpdate = () => load();
+    const handleUpdate = () => load();
 
-  window.addEventListener("cartUpdated", handleUpdate);
+    window.addEventListener("cartUpdated", handleUpdate);
 
-  return () => window.removeEventListener("cartUpdated", handleUpdate);
-}, []);
+    return () => window.removeEventListener("cartUpdated", handleUpdate);
+  }, []);
 
-
+  // ✅ Calculations
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const deliveryFee = cart.length > 0 ? 40 : 0;
+
+  // ✅ Delivery Fee Rule:
+  // ✅ Above or equal 999 => 0 delivery
+  // ✅ Below 999 => 99 delivery fee
+  const deliveryFee = cart.length === 0 ? 0 : subtotal >= 999 ? 0 : 99;
+
+  // ✅ Discount rule (kept same)
   const discount = subtotal > 499 ? 50 : 0;
+
+  // ✅ Total Payable
   const total = subtotal + deliveryFee - discount;
 
   return (
@@ -81,9 +89,7 @@ useEffect(() => {
                     </div>
                   </div>
 
-                  <div style={styles.itemTotal}>
-                    ₹{item.price * item.qty}
-                  </div>
+                  <div style={styles.itemTotal}>₹{item.price * item.qty}</div>
                 </div>
               ))}
 
@@ -109,7 +115,14 @@ useEffect(() => {
 
               <div style={styles.summaryRow}>
                 <span>Delivery Fee</span>
-                <span>₹{deliveryFee}</span>
+                <span
+                  style={{
+                    fontWeight: "900",
+                    color: deliveryFee === 0 ? "#16a34a" : "#111827",
+                  }}
+                >
+                  ₹{deliveryFee}
+                </span>
               </div>
 
               <div style={styles.summaryRow}>
@@ -125,6 +138,17 @@ useEffect(() => {
                 <span>Total Payable</span>
                 <span>₹{total}</span>
               </div>
+
+              {/* ✅ Free Delivery Note */}
+              {subtotal >= 999 ? (
+                <p style={styles.freeNoteSuccess}>
+                  ✅ Free Delivery applied (Above ₹999)
+                </p>
+              ) : (
+                <p style={styles.freeNoteWarn}>
+                  ⚠️ Add ₹{999 - subtotal} more to get Free Delivery!
+                </p>
+              )}
 
               <button
                 style={styles.checkoutBtn}
@@ -311,6 +335,23 @@ const styles = {
     marginTop: "12px",
     fontSize: "13px",
     color: "#64748b",
+    textAlign: "center",
+  },
+
+  // ✅ New styles for free delivery message
+  freeNoteSuccess: {
+    marginTop: "10px",
+    fontSize: "13px",
+    fontWeight: "900",
+    color: "#16a34a",
+    textAlign: "center",
+  },
+
+  freeNoteWarn: {
+    marginTop: "10px",
+    fontSize: "13px",
+    fontWeight: "900",
+    color: "#475569",
     textAlign: "center",
   },
 };

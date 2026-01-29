@@ -4,7 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
   const cart = getCart();
+
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  // ✅ Delivery Fee Logic
+  // ✅ Above or equal 999 => Free Delivery
+  // ✅ Below 999 => 99 delivery charge
+  const deliveryFee = total >= 999 ? 0 : 99;
+  const grandTotal = total + deliveryFee;
+
   const navigate = useNavigate();
 
   const [address, setAddress] = useState({
@@ -212,8 +220,29 @@ export default function Checkout() {
         </div>
 
         <div style={styles.summaryRow}>
+          <span>Sub Total</span>
+          <span style={{ fontWeight: "900" }}>₹{total}</span>
+        </div>
+
+        <div style={styles.summaryRow}>
+          <span>Delivery Fee</span>
+          <span style={{ fontWeight: "900", color: "#16a34a" }}>
+            ₹{deliveryFee}
+          </span>
+        </div>
+
+        {/* ✅ Free Delivery Note */}
+        {total >= 999 ? (
+          <p style={styles.freeNote}>✅ Free Delivery applied (Above ₹999)</p>
+        ) : (
+          <p style={styles.freeNote}>
+            ⚠️ Add ₹{999 - total} more to get Free Delivery!
+          </p>
+        )}
+
+        <div style={styles.summaryRow}>
           <span>Total Payable</span>
-          <span style={styles.totalPrice}>₹{total}</span>
+          <span style={styles.totalPrice}>₹{grandTotal}</span>
         </div>
 
         {/* ✅ Place Order */}
@@ -329,6 +358,13 @@ const styles = {
     fontWeight: "950",
     fontSize: "18px",
     color: "#16a34a",
+  },
+
+  freeNote: {
+    marginTop: "10px",
+    fontSize: "13px",
+    fontWeight: "850",
+    color: "#475569",
   },
 
   btn: {
