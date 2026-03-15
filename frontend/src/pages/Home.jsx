@@ -21,7 +21,7 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       const res = await axios.get(
-        "https://crowncart-1.onrender.com/api/products"
+        "https://crowncart1.onrender.com/api/products"
       );
       setProducts(res.data);
     } catch (err) {
